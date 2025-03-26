@@ -16,8 +16,8 @@ public:
                 low = max(0, low-1);
                 high++;
             }
+            if(high<0) return false;
         }
-        if(high<0) return false;
         return low==0;
     }
 };
