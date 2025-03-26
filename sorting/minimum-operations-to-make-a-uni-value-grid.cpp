@@ -11,9 +11,10 @@ public:
             }
         }
 
-        sort(newArr.begin(), newArr.end());
-
         int s = newArr.size();
+        // sort(newArr.begin(), newArr.end());
+        nth_element(newArr.begin(), newArr.begin()+s/2, newArr.end());
+
         int target = newArr[s/2];
         int operations = 0;
 
