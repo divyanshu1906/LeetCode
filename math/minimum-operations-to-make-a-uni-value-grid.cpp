@@ -4,6 +4,7 @@ public:
         int m = grid.size();
         int n = grid[0].size();
         vector<int>newArr;
+        if(m==1 && n==1) return 0;
         for(int i=0; i<m; i++){
             for(int j=0; j<n; j++){
                 if(grid[i][j] % x != 0) return -1;
