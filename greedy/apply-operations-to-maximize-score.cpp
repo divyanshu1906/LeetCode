@@ -1,64 +1,131 @@
 class Solution {
 public:
-    const int MOD = 1000000007;
-    int findingPrimeFactor(int n){
-        int uniquePrimeFactor = 0;
-        for (int div = 2; div * div <= n; div++) {
-            if (n % div == 0) {
-                uniquePrimeFactor++;
-                while (n % div == 0) {
-                    n /= div;
-                }
-            }
+    const int MOD = 1e9 + 7;
+
+    long long findPower(long long a, long long b){
+        if(b==0) return 1;
+
+        long long half = findPower(a, b/2);
+        long long result = (half*half) % MOD;
+
+        if(b%2 == 1) {
+            result = (result*a) % MOD;
         }
-        if (n > 1) uniquePrimeFactor++;  
-        return uniquePrimeFactor;
+
+        return result;
     }
-    int maximumScore(vector<int>& nums, int k) {
+    vector<int> getPrimes(int limit){
+        vector<bool>isPrime(limit+1, true);
+        vector<int>primes;
+
+        for(int i=2; i*i <= limit; i++){
+            if(isPrime[i]){
+                for(int j=i*i; j<=limit; j+=i){
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        for(int i=2; i<=limit; i++){
+            if(isPrime[i]){
+                primes.push_back(i);
+            }
+        }
+
+        return primes;
+    }
+
+    vector<int> findPrimesScores(vector<int> &nums){
         int n = nums.size();
+        vector<int>primesScores(n, 0);
+        int maxElement = *max_element(begin(nums), end(nums));
+        vector<int>primes = getPrimes(maxElement);
 
-        priority_queue<vector<int>>pq;
-        unordered_map<int, int>mpp;
         for(int i=0; i<n; i++){
-            if(mpp.find(nums[i]) == mpp.end()){
-                mpp[nums[i]] = findingPrimeFactor(nums[i]);
+            int num = nums[i];
+
+            for(int prime : primes){
+                if(prime*prime > num){
+                    break;
+                }
+
+                if(num%prime != 0){
+                    continue;
+                }
+
+                primesScores[i]++;
+                while(num % prime == 0){
+                    num /= prime;
+                }
             }
-            pq.push({nums[i], i, mpp[nums[i]]});
+            if(num>1){
+                primesScores[i]++;
+            }
+        }
+        return primesScores;
+    }
+
+    vector<int> findNextGreater(vector<int> &primesScores){
+        int n = primesScores.size();
+        vector<int>nextGreater(n);
+        stack<int>st;
+
+        for(int i=n-1; i>=0; i--){
+            while(!st.empty() && primesScores[st.top()] <= primesScores[i]){
+                st.pop();
+            }
+
+            nextGreater[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+        return nextGreater;
+    }
+
+     vector<int> findPrevGreater(vector<int> &primesScores){
+        int n = primesScores.size();
+        vector<int>prevGreater(n);
+        stack<int>st;
+
+        for(int i=0; i<n; i++){
+            while(!st.empty() && primesScores[st.top()] < primesScores[i]){
+                st.pop();
+            }
+
+            prevGreater[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+        return prevGreater;
+    }
+
+    int maximumScore(vector<int>& nums, int k) {
+        vector<int> primesScores = findPrimesScores(nums);
+        vector<int> nextGreater = findNextGreater(primesScores);
+        vector<int> prevGreater = findPrevGreater(primesScores);
+
+        int n = nums.size();
+        vector<long long>subarrays(n, 0);
+
+        for(int i=0; i<n; i++){
+            subarrays[i] = (long long) (nextGreater[i] - i) * (i-prevGreater[i]);
         }
 
-        long long ans = 1;
-
-        while(k>0 && !pq.empty()){
-            vector<int>top = pq.top();
-            pq.pop();
-
-            int ele = top[0];
-            int idx = top[1];
-            int primeFactor = top[2];
-            
-            ans = (ans*ele)%MOD;
-            k--;
-
-            int left = idx-1;
-            int right = idx+1;
-            while(right<n && k>0){
-                if(mpp[nums[right]] <= primeFactor){
-                    ans = (ans*ele)%MOD;
-                    k--;
-                }
-                else break;
-                right++;
-            }
-            while(left>=0 && k>0){
-                if(mpp[nums[left]]<primeFactor){
-                    ans=(ans*ele)%MOD;
-                    k--;
-                }
-                else break;
-                left--;
-            }
-
+        vector<pair<int, int>>sortedNums(n);
+        for(int i=0; i<n; i++){
+            sortedNums[i] = {nums[i], i};
         }
-        return static_cast<int>(ans);
+
+        sort(sortedNums.begin(), sortedNums.end(), greater<>());
+
+        long long score = 1;
+
+        int idx = 0;
+        while(k>0){
+            auto [num, i] = sortedNums[idx];
+            long long operations = min((long long)k, subarrays[i]);
+            score = (score*findPower(num, operations)) % MOD;
+            k -= operations;
+            idx++;
+        }
+        return score;
     }
 };
