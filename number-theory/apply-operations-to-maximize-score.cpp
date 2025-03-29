@@ -39,13 +39,25 @@ public:
             ans = (ans*ele)%MOD;
             k--;
 
-            for(int i=idx+1; i<n && k>0; i++){
-                if(mpp[nums[i]] <= primeFactor){
+            int left = idx-1;
+            int right = idx+1;
+            while(right<n && k>0){
+                if(mpp[nums[right]] <= primeFactor){
                     ans = (ans*ele)%MOD;
                     k--;
                 }
                 else break;
+                right++;
             }
+            while(left>=0 && k>0){
+                if(mpp[nums[left]]<primeFactor){
+                    ans=(ans*ele)%MOD;
+                    k--;
+                }
+                else break;
+                left--;
+            }
+
         }
         return static_cast<int>(ans);
     }
