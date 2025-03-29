@@ -14,6 +14,7 @@ public:
 
         return result;
     }
+    
     vector<int> getPrimes(int limit){
         vector<bool>isPrime(limit+1, true);
         vector<int>primes;
@@ -39,9 +40,9 @@ public:
         int n = nums.size();
         vector<int>primesScores(n, 0);
         int maxElement = *max_element(begin(nums), end(nums));
-        vector<int>primes = getPrimes(maxElement);
+        vector<int>primes = getPrimes(maxElement);//O(mloglogm)
 
-        for(int i=0; i<n; i++){
+        for(int i=0; i<n; i++){//O(n * log(m))
             int num = nums[i];
 
             for(int prime : primes){
@@ -98,14 +99,14 @@ public:
     }
 
     int maximumScore(vector<int>& nums, int k) {
-        vector<int> primesScores = findPrimesScores(nums);
-        vector<int> nextGreater = findNextGreater(primesScores);
-        vector<int> prevGreater = findPrevGreater(primesScores);
+        vector<int> primesScores = findPrimesScores(nums);//O(mloglogm + n * log(m))
+        vector<int> nextGreater = findNextGreater(primesScores);//O(n)
+        vector<int> prevGreater = findPrevGreater(primesScores);//O(n)
 
         int n = nums.size();
         vector<long long>subarrays(n, 0);
 
-        for(int i=0; i<n; i++){
+        for(int i=0; i<n; i++){//O(n)
             subarrays[i] = (long long) (nextGreater[i] - i) * (i-prevGreater[i]);
         }
 
@@ -114,12 +115,12 @@ public:
             sortedNums[i] = {nums[i], i};
         }
 
-        sort(sortedNums.begin(), sortedNums.end(), greater<>());
+        sort(sortedNums.begin(), sortedNums.end(), greater<>());//O(nlogn)
 
         long long score = 1;
 
         int idx = 0;
-        while(k>0){
+        while(k>0){   //O(k*log(operations))
             auto [num, i] = sortedNums[idx];
             long long operations = min((long long)k, subarrays[i]);
             score = (score*findPower(num, operations)) % MOD;
