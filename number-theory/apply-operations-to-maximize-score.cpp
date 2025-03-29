@@ -43,7 +43,8 @@ public:
                 if(mpp[nums[i]] <= primeFactor){
                     ans = (ans*ele)%MOD;
                     k--;
-                }else break;
+                }
+                else break;
             }
         }
         return static_cast<int>(ans);
