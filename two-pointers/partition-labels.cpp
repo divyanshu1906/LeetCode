@@ -5,14 +5,12 @@ public:
 
         unordered_map<char, int>mpp;
         for(int i=n-1; i>=0; i--){
-            char ch = s[i];
-            if(mpp.find(ch) == mpp.end()){
-                mpp[ch] = i;
-            }
+            mpp[s[i]] = i;
         } 
 
         vector<int>ans;
         int start=0, end=0;
+        
         for(int i=1; i<n; i++){
             end = max(end, mpp[s[i]]);
             if(i==end){
