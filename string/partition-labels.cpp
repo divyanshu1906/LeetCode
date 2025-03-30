@@ -11,7 +11,7 @@ public:
         vector<int>ans;
         int start=0, end=0;
 
-        for(int i=1; i<n; i++){
+        for(int i=0; i<n; i++){
             end = max(end, mpp[s[i]]);
             if(i==end){
                 ans.push_back(end-start+1);
