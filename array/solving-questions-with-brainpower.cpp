@@ -9,7 +9,7 @@ public:
     }
     long long mostPoints(vector<vector<int>>& questions) {
         int n = questions.size();
-        vector<int>dp(n, -1);
+        vector<long long>dp(n, -1);
         return calculatingPoints(0, questions, dp);
     }
 };
