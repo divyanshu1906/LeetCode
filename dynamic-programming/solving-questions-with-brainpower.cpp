@@ -1,6 +1,6 @@
 class Solution {
 public:
-    long long calculatingPoints(int idx, vector<vector<int>>& questions, vector<int>&dp){
+    long long calculatingPoints(int idx, vector<vector<int>>& questions, vector<long long>&dp){
         if(idx>=questions.size()) return 0;
         if(dp[idx] != -1) return dp[idx];
         long long take = questions[idx][0] + calculatingPoints(idx+questions[idx][1]+1, questions, dp);
