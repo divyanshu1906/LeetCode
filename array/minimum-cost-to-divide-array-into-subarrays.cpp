@@ -2,26 +2,25 @@ class Solution {
 public:
     int n;
 
-    long long getCostSum(vector<int>& costPrefixSum, int l, int r) {
-        return l == 0 ? costPrefixSum[r] : costPrefixSum[r] - costPrefixSum[l - 1];
-    }
-
-    long long findingMinimumCostSubarray(int idx, int partitionIdx, vector<int>&prefixSum, vector<int>&costSum, int k, vector<vector<long long>>&dp){
+    long long findingMinimumCostSubarray(int idx, int partitionIdx, vector<int>&prefixSum, vector<int>&costSum, int k, vector<long long>&dp){
         if(idx==n){
             return 0;
         }
-        if(dp[idx][partitionIdx] != -1) return dp[idx][partitionIdx];
+        if(dp[idx] != -1) return dp[idx];
 
         long long minCost = LLONG_MAX;
-        long long totalCost = 0;
 
         for(int i=idx; i<n; i++){
-            int totalCost = getCostSum(costSum, idx, i);
-            long long currentCost = (1LL * (prefixSum[i] + k * partitionIdx)) * totalCost + findingMinimumCostSubarray(i+1, partitionIdx+1, prefixSum, costSum, k, dp);
-            minCost = min(minCost, currentCost);
+            long long sumTill = prefixSum[i];
+            long long totalCost = idx == 0 ? costSum[i] : costSum[i] - costSum[idx - 1];
+            long long costTillLast = idx==0 ? costSum[n-1] : costSum[n-1] - costSum[idx -1];
+
+            long long currentCost = (sumTill * totalCost) + (k*costTillLast);
+            long long recCost = findingMinimumCostSubarray(i+1, partitionIdx+1, prefixSum, costSum, k, dp);
+            minCost = min(minCost, currentCost+recCost);
         }
         
-        return dp[idx][partitionIdx] = minCost;
+        return dp[idx] = minCost;
     }
     long long minimumCost(vector<int>& nums, vector<int>& cost, int k) {
         n = nums.size();
@@ -34,7 +33,7 @@ public:
             prefixSum[i] = prefixSum[i-1] + nums[i];
             costSum[i] = costSum[i-1] + cost[i];
         }
-        vector<vector<long long>>dp(n+1, vector<long long>(n+1, -1));
+        vector<long long>dp(n+1, -1);
         return findingMinimumCostSubarray(0, 1, prefixSum, costSum, k, dp);
     }
 };
