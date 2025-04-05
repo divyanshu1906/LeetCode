@@ -10,11 +10,8 @@ public:
         for(int i=idx; i<n; i++){
             totalCost += cost[i]; 
             
-            int sum = prefixSum[i];
-            long long currentCost = (1LL * (sum + k * partitionIdx)) * totalCost;
-
-            long long recCost = findingMinimumCostSubarray(i+1, partitionIdx+1, nums, cost, prefixSum, k);
-            minCost = min(minCost, currentCost+recCost);
+            long long currentCost = (1LL * (prefixSum[i] + k * partitionIdx)) * totalCost + findingMinimumCostSubarray(i+1, partitionIdx+1, nums, cost, prefixSum, k);
+            minCost = min(minCost, currentCost);
         }
         
         return minCost;
