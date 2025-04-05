@@ -1,13 +1,15 @@
 class Solution {
 public:
     int n;
-    long long findingMinimumCostSubarray(int idx, int partitionIdx, vector<int>&nums, vector<int>&cost, vector<int>&prefixSum, int k, vector<vector<int>>&dp){
+    long long findingMinimumCostSubarray(int idx, int partitionIdx, vector<int>&nums, vector<int>&cost, vector<int>&prefixSum, int k, vector<vector<long long>>&dp){
         if(idx==n){
             return 0;
         }
         if(dp[idx][partitionIdx] != -1) return dp[idx][partitionIdx];
+
         long long minCost = LLONG_MAX;
         long long totalCost = 0;
+
         for(int i=idx; i<n; i++){
             totalCost += cost[i]; 
             
@@ -25,7 +27,7 @@ public:
         for(int i=1; i<n; i++){
             prefixSum[i] = prefixSum[i-1] + nums[i];
         }
-        vector<vector<int>>dp(n+1, vector<int>(n+1, -1));
+        vector<vector<long long>>dp(n+1, vector<long long>(n+1, -1));
         return findingMinimumCostSubarray(0, 1, nums, cost, prefixSum, k, dp);
     }
 };
